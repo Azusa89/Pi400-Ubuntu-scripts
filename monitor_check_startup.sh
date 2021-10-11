@@ -1,25 +1,25 @@
+
+Timothy Koh
 #!/bin/sh
 
-monitorcheck='xrandr --listactivemonitors'
 FILE=/etc/X11/xorg.conf.bkp
-
-if [[$monitorcheck == *"HDMI"]]; then
+if xrandr --listactivemonitors | grep HDMI; then
     if test -f "$FILE"; then
-        sudo mv /etc/X11/xorg.conf.bkp /etc/X11/xorg.conf
-        #"Switching to Headless mode!, rebooting in 5 seconds"
-        #"No monitor detected,xorg.conf detected Headless mode! already enabled"
+        echo "HDMI is plugged in and already in Monitor mode, Nothing to do."
+    else
+        echo "HDMI plugged in and not in monitor mode "
+        sudo mv /etc/X11/xorg.conf /etc/X11/xorg.conf.bkp
+        echo "Switching to Monitor mode!, rebooting now."
         sudo reboot
-        
     fi
-    
 
 else
     if test -f "$FILE"; then
-        #echo "monitor detected,xorg.conf not detected monitor mode! already enabled"
-    else
-        sudo mv /etc/X11/xorg.conf /etc/X11/xorg.conf.bkp
-        #"Monitor detected, Switching to Monitor mode!"
+        echo "Monitor not detected and in monitor mode".
+        sudo mv /etc/X11/xorg.conf.bkp /etc/X11/xorg.conf
+        echo "Switching to Headless mode!, rebooting now."
         sudo reboot
-    fi    
-    
+    else
+        echo "Monitor not detected and already in headless mode. Nothing to do."
+    fi
 fi
